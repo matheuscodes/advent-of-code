@@ -30,6 +30,7 @@ module.exports = {
   min,
   max,
   concat,
+  clone: i => JSON.parse(JSON.stringify(i)),
   movements: (row,column,board) => {
    return [
      // [row-1, column-1],
