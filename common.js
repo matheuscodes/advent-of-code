@@ -19,6 +19,15 @@ function concat(acc, current) {
   return acc.concat(current);
 }
 
+function uniquePoints(acc,current) {
+  if(!acc.some(i => {
+    return i[0] === current[0] &&
+           i[1] === current[1] &&
+           i[2] === current[2]
+  })) acc.push(current);
+  return acc;
+}
+
 module.exports = {
   read: (file) => {
     return fs
@@ -30,6 +39,7 @@ module.exports = {
   min,
   max,
   concat,
+  uniquePoints,
   clone: i => JSON.parse(JSON.stringify(i)),
   movements: (row,column,board) => {
    return [
