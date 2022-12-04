@@ -5,8 +5,11 @@ https://adventofcode.com/2022
 # Solutions
 
 [Day 01 task](./day01.task.md) - [solution](./day01.js)
+
 [Day 02 task](./day02.task.md) - [solution](./day02.js)
+
 [Day 03 task](./day03.task.md) - [solution](./day03.js)
+
 [Day 04 task](./day04.task.md) - [solution](./day04.js)
 
 ```
