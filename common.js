@@ -28,6 +28,10 @@ function uniquePoints(acc,current) {
   return acc;
 }
 
+function overlap(a, b) {
+  return [...a].filter(j => b.has(j))
+}
+
 module.exports = {
   read: (file, fallback) => {
     if(fallback && process.argv[2] === '--test') {
@@ -42,6 +46,7 @@ module.exports = {
   min,
   max,
   concat,
+  overlap,
   uniquePoints,
   clone: i => JSON.parse(JSON.stringify(i)),
   movements: (row,column,board) => {
