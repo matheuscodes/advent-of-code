@@ -29,12 +29,15 @@ function uniquePoints(acc,current) {
 }
 
 module.exports = {
-  read: (file) => {
+  read: (file, fallback) => {
+    if(fallback && process.argv[2] === '--test') {
+      return fallback;
+    }
     return fs
       .readFileSync(file)
       .toString('utf8');
   },
-  sum: (a,b) => a+b,
+  sum: (a,b) => Number(a) + Number(b),
   prod: (a,b) => a*b,
   min,
   max,
