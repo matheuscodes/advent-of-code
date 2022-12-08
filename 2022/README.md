@@ -34,6 +34,8 @@ Day       Time   Rank  Score       Time   Rank  Score
 
 [Day 07 task](./day07.task.md) - [solution](./day07.js)
 
+[Day 08 task](./day08.task.md) - [solution](./day08.js)
+
 ## Drawing
 
 ```
