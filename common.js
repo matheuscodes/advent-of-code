@@ -45,6 +45,8 @@ module.exports = {
   prod: (a,b) => a*b,
   min,
   max,
+  desc: (a,b) => (b - a),
+  asc: (a,b) => (a - b),
   concat,
   overlap,
   uniquePoints,
