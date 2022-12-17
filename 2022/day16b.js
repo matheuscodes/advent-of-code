@@ -123,113 +123,75 @@ for(let time = 0; time <= maxTime; time++) {
       console.log(`Valve ${i.valve} is open, releasing ${i.flow} pressure.`)
     }
   });
-  if(!(myself.steps.length > 0) && baseGraph[myself.position].flow > 0) {
+  if(!(myself.steps.length > 0) && myself.position && baseGraph[myself.position].flow > 0) {
     baseGraph[myself.position].open = true;
     console.log(`You open valve ${baseGraph[myself.position].valve}`);
     myself.movingTo = '';
   }
-  if(!(elefant.steps.length > 0) && baseGraph[elefant.position].flow > 0) {
+  if(!(elefant.steps.length > 0) && elefant.position && baseGraph[elefant.position].flow > 0) {
     baseGraph[elefant.position].open = true;
     console.log(`The Elefant opens valve ${baseGraph[elefant.position].valve}`);
     elefant.movingTo = '';
   }
-  if(elefant.movingTo === '' && myself.movingTo === '') {
-    candidates = {};
-  	nextToOpen(baseGraph[myself.position],[],time, contribution)
-      .forEach(i => {
-        if(!candidates[i.valve]) candidates[i.valve] = {...i}
-        if(candidates[i.valve].contribution <= i.contribution)
-          candidates[i.valve] = {...candidates[i.valve], myself: i.path.length}
-      });
-  	nextToOpen(baseGraph[elefant.position],[],time, contribution)
-      .forEach(i => {
-        if(!candidates[i.valve]) candidates[i.valve] = {...i}
-        if(candidates[i.valve].contribution <= i.contribution)
-          candidates[i.valve] = {...candidates[i.valve], elefant: i.path.length}
-      });
 
-    const sorted = Object.keys(candidates).map(i => candidates[i]).sort((a,b) => b.contribution - a.contribution).slice(0,2);
+  candidates = {};
+	myself.steps.length === 0 ? nextToOpen(baseGraph[myself.position],[],time, contribution)
+    .filter(i => (i.valve !== myself.movingTo && i.valve !== elefant.movingTo))
+    .forEach(i => {
+      if(!candidates[i.valve]) candidates[i.valve] = {...i}
+      candidates[i.valve] = {
+        ...candidates[i.valve],
+        mPath: i.path,
+        myself: i.path.length
+      }
+    }) : '';
+	elefant.steps.length === 0 ? nextToOpen(baseGraph[elefant.position],[],time, contribution)
+    .filter(i => (i.valve !== myself.movingTo && i.valve !== elefant.movingTo))
+    .forEach(i => {
+      if(!candidates[i.valve]) candidates[i.valve] = {...i}
+      candidates[i.valve] = {
+        ...candidates[i.valve],
+        ePath: i.path,
+        elefant: i.path.length
+      }
+    }) : '';
+
+    let sorted = Object.keys(candidates).map(i => candidates[i]).sort((a,b) => b.contribution - a.contribution);
     let myCandidate;
     let hisCandidate;
-    if(sorted.filter(i => (i.myself > 0 && !i.elefant)).length > 0) {
-      //exclusive for me.
-      myCandidate = sorted.filter(i => i.myself > 0 && !i.elefant)[0];
-      hisCandidate = sorted.filter(i => !(i.myself > 0 && !i.elefant))[0];
-    } else if(sorted.filter(i => (i.elefant > 0 && !i.myself)).length > 0) {
-      //exclusive for elefant.
-      hisCandidate = sorted.filter(i => i.elefant > 0 && !i.myself)[0];
-      myCandidate = sorted.filter(i => !(i.elefant > 0 && !i.myself))[0];
-    } else {
-      //any can take any.
-      myCandidate = sorted[0];
-      hisCandidate = sorted[1];
+    if(myself.steps.length <= 0 && elefant.steps.length <= 0 && sorted.length >= 2) {
+      sorted = sorted.sort(i => i.myself - i.elefant);
     }
+    if(myself.steps.length <= 0) myCandidate = sorted.shift();
+    if(elefant.steps.length <= 0) hisCandidate = sorted.shift();
 
-    if(myCandidate) {
-      myself.steps = myself.steps.concat(myCandidate.path)
+    if(myCandidate && myself.steps.length <= 0) {
+      myself.steps = myself.steps.concat(myCandidate.mPath)
       myself.movingTo = myself.steps[myself.steps.length - 1];
+      console.log("m", candidates,myCandidate)
       console.log('You going to:', myself.movingTo)
     } else {
-      myself.stopped = true;
-      myself.movingTo = '';
-    }
-
-    if(hisCandidate) {
-      elefant.steps = elefant.steps.concat(hisCandidate.path)
-      elefant.movingTo = elefant.steps[elefant.steps.length - 1];
-      console.log('Elefant going to:', elefant.movingTo)
-    } else {
-      elefant.stopped = true;
-      elefant.movingTo = '';
-    }
-
-    // if(time === 0) console.log("mf", sorted, hisCandidate, myCandidate)
-  } else {
-    if(!myself.stopped) {
       if(myself.steps.length > 0) {
         myself.position = myself.steps.shift();
         console.log(`You move to valve ${myself.position}`);
       } else {
-        if(time === 0) console.log(nextToOpen(baseGraph[myself.position],[],time, contribution));
-        const candidate = nextToOpen(baseGraph[myself.position],[],time, contribution)
-        .filter(candidate => candidate.path[candidate.path.length - 1] !== elefant.movingTo)
-        .shift();
-        if(time === 7) console.log(contribution, nextToOpen(baseGraph[myself.position],[],time, contribution))
-        if(candidate) {
-          myself.steps = myself.steps.concat(candidate.path)
-          myself.movingTo = myself.steps[myself.steps.length - 1];
-          console.log('You going to:', myself.movingTo)
-        } else {
-          myself.stopped = true;
-          myself.movingTo = '';
-        }
+        //do nothing... just stopped.
       }
     }
 
-    if(!elefant.stopped) {
+    if(hisCandidate && elefant.steps.length <= 0) {
+      elefant.steps = elefant.steps.concat(hisCandidate.ePath)
+      elefant.movingTo = elefant.steps[elefant.steps.length - 1];
+      console.log("e",candidates,hisCandidate)
+      console.log('Elefant going to:', elefant.movingTo)
+    } else {
       if(elefant.steps.length > 0) {
         elefant.position = elefant.steps.shift();
         console.log(`The Elefant moves to valve ${elefant.position}`);
       } else {
-        const candidate = nextToOpen(baseGraph[elefant.position],[],time, contribution)
-        .filter(candidate => candidate.path[candidate.path.length - 1] !== myself.movingTo)
-        .shift();
-        if(time === 7) {
-          console.log(contribution, nextToOpen(baseGraph[elefant.position],[],time, contribution))
-        }
-        if(candidate) {
-          elefant.steps = elefant.steps.concat(candidate.path)
-          elefant.movingTo = elefant.steps[elefant.steps.length - 1];
-          console.log('Elefant going to:', elefant.movingTo)
-        } else {
-          elefant.stopped = true;
-          elefant.movingTo = '';
-        }
+        //do nothing... just stopped.
       }
     }
-  }
-  // console.log(myself,elefant)
-  // break;
 }
 
 console.log("Pressure", contribution);
@@ -237,86 +199,3 @@ console.log("Pressure", contribution);
 // 1766 too low.
 // 2150 too low.
 // 1874 too low.
-
-
-//
-// let elefant = {
-//   position: 'AA',
-//   steps: [],
-//   movingTo: '',
-// }
-//
-// let myself = {
-//   position: 'AA',
-//   steps: [],
-//   movingTo: '',
-// }
-// let contribution = 0;
-// for(let time = 0; time <= maxTime; time++) {
-//   console.log(`== Minute ${time} ==`)
-//   if(time === 8) console.log(myself,elefant);
-//   if(!(myself.steps.length > 0) && baseGraph[myself.position].flow > 0) {
-//     baseGraph[myself.position].open = true;
-//     console.log(`You open valve ${baseGraph[myself.position].valve}`);
-//     myself.movingTo = '';
-//   }
-//   if(!(elefant.steps.length > 0) && baseGraph[elefant.position].flow > 0) {
-//     baseGraph[elefant.position].open = true;
-//     console.log(`The Elefant opens valve ${baseGraph[elefant.position].valve}`);
-//     elefant.movingTo = '';
-//   }
-//
-//   if(!myself.stopped) {
-//     if(myself.steps.length > 0) {
-//       myself.position = myself.steps.shift();
-//       console.log(`You move to valve ${myself.position}`);
-//     } else {
-//       if(time === 0) console.log(nextToOpen(baseGraph[myself.position],[],time, contribution));
-//       const candidate = nextToOpen(baseGraph[myself.position],[],time, contribution)
-//       .filter(candidate => candidate.path[candidate.path.length - 1] !== elefant.movingTo)
-//       .shift();
-//       if(time === 7) console.log(contribution, nextToOpen(baseGraph[myself.position],[],time, contribution))
-//       if(candidate) {
-//         myself.steps = myself.steps.concat(candidate.path)
-//         myself.movingTo = myself.steps[myself.steps.length - 1];
-//         console.log('You going to:', myself.movingTo)
-//       } else {
-//         myself.stopped = true;
-//         myself.movingTo = '';
-//       }
-//     }
-//   }
-//
-//   if(!elefant.stopped) {
-//     if(elefant.steps.length > 0) {
-//       elefant.position = elefant.steps.shift();
-//       console.log(`The Elefant moves to valve ${elefant.position}`);
-//     } else {
-//       const candidate = nextToOpen(baseGraph[elefant.position],[],time, contribution)
-//       .filter(candidate => candidate.path[candidate.path.length - 1] !== myself.movingTo)
-//       .shift();
-//       if(time === 7) {
-//         console.log(contribution, nextToOpen(baseGraph[elefant.position],[],time, contribution))
-//       }
-//       if(candidate) {
-//         elefant.steps = elefant.steps.concat(candidate.path)
-//         elefant.movingTo = elefant.steps[elefant.steps.length - 1];
-//         console.log('Elefant going to:', elefant.movingTo)
-//       } else {
-//         elefant.stopped = true;
-//         elefant.movingTo = '';
-//       }
-//     }
-//   }
-//
-//   Object.keys(baseGraph).map(i => baseGraph[i]).forEach(i => {
-//     if(i.open) {
-//       contribution += i.flow;
-//       console.log(`Valve ${i.valve} is open, releasing ${i.flow} pressure.`)
-//     }
-//   });
-//   // console.log(myself,elefant)
-//   // break;
-// }
-//
-// console.log("Pressure", contribution);
