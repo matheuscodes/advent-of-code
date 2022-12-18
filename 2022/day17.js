@@ -180,24 +180,31 @@ let pruned = 0;
 cave = [['-','-','-','-','-','-','-']];
 jets = clone(input);
 clock = 0;
+let cut = 0;
+let now = new Date();
 for(let i = 0; i < 1000000000000; i++) {
-  const rock = nextRock(highest());
+  const rock = nextRock(cut + highest());
   do {
     if(jets.length <= 0) jets = clone(input);
     rock.move(jets.shift());
   } while(rock.fall());
-  if(jets.length <= 0) {
-    rock.write();
-    console.log('t',i);
-    break;
-  }
+
   clock += 1;
-  if(i % 10000 === 0) console.log('processing', i)
+  if(i % 10000 === 0) {
+    const nowNow = new Date();
+    const spent = nowNow.getTime() - now.getTime();
+    console.log('processing for', spent, 'ms');
+    const willBeDone = new Date(nowNow.getTime() + (1000000000000 / 10000)*spent)
+    now = nowNow;
+    console.log('Estimated finish', willBeDone);
+    cut += cave.splice(0, cave.length/2).length;
+    console.log('Cut',cut);
+  }
 }
 
 printCave();
 
-console.log(pruned, cave.map(i => i.join('')).filter(i => {
+console.log(cut, cave.map(i => i.join('')).filter(i => {
   return (i.length > 0 && i !== '-------')
 }).length)
 
