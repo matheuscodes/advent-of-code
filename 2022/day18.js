@@ -13,7 +13,7 @@ let testInput = `2,2,2
 2,3,5
 `;
 
-const { read, clone, sum } = require('../common.js');
+const { read, clone, sum, max } = require('../common.js');
 
 const coreGraph = {};
 
@@ -136,10 +136,14 @@ input.forEach(({x,y,z}) => {
   if(z > maxCoordinates.z) maxCoordinates.z = z;
 });
 console.log(maxCoordinates);
-const limits = {xy:{}, xz:{}, yz:{}}
 
-for(let i = -10; i < maxCoordinates.x + 10; i++) {
-  for(let j = -10; j < maxCoordinates.y + 10; j++) {
+const maxOfMax = [maxCoordinates.x, maxCoordinates.y, maxCoordinates.z].reduce(max,-10000);
+
+console.log("Max of max:", maxOfMax, (maxOfMax + 20)*(maxOfMax + 20)*6);
+
+const limits = {xy:{}, xz:{}, yz:{}}
+for(let i = -10; i < maxOfMax + 10; i++) {
+  for(let j = -10; j < maxOfMax + 10; j++) {
     if(!limits.xy[`${i},${j}`]) limits.xy[`${i},${j}`] = {max: 0, min: maxCoordinates.z}
     input.filter(({x,y,z}) => (x === i && y === j))
       .forEach(({x,y,z}) => {
@@ -149,8 +153,8 @@ for(let i = -10; i < maxCoordinates.x + 10; i++) {
   }
 }
 
-for(let i = -10; i < maxCoordinates.x + 10; i++) {
-  for(let j = -10; j < maxCoordinates.z + 10; j++) {
+for(let i = -10; i < maxOfMax + 10; i++) {
+  for(let j = -10; j < maxOfMax + 10; j++) {
     if(!limits.xz[`${i},${j}`]) limits.xz[`${i},${j}`] = {max: 0, min: maxCoordinates.y}
     input.filter(({x,y,z}) => (x === i && z === j))
       .forEach(({x,y,z}) => {
@@ -160,8 +164,8 @@ for(let i = -10; i < maxCoordinates.x + 10; i++) {
   }
 }
 
-for(let i = -10; i < maxCoordinates.y + 10; i++) {
-  for(let j = -10; j < maxCoordinates.z + 10; j++) {
+for(let i = -10; i < maxOfMax + 10; i++) {
+  for(let j = -10; j < maxOfMax + 10; j++) {
     if(!limits.yz[`${i},${j}`]) limits.yz[`${i},${j}`] = {max: 0, min: maxCoordinates.x}
     input
       .filter(({x,y,z}) => (y === i && z === j))
@@ -172,33 +176,60 @@ for(let i = -10; i < maxCoordinates.y + 10; i++) {
   }
 }
 
-console.log(limits)
-const oldSA = surfaceArea
-surfaceArea -= Object.keys(neighbours)
-  // .filter(key => !key.includes('-')) // removes any negatives
-  // .filter(key => neighbours[key] >= 6)
-  .filter(key => {
-    const i = key.split(',');
-    const x = parseInt(i[0]);
-    const y = parseInt(i[1]);
-    const z = parseInt(i[2]);
+const newInput = [];
 
-    return (
-      // (limits.yz[`${y},${z}`] && limits.xz[`${x},${z}`] && limits.xy[`${x},${y}`]) &&
-      (x > limits.yz[`${y},${z}`].min && x < limits.yz[`${y},${z}`].max) &&
-      (y > limits.xz[`${x},${z}`].min && y < limits.xz[`${x},${z}`].max) &&
-      (z > limits.xy[`${x},${y}`].min && z < limits.xy[`${x},${y}`].max)
-    )
-  })
-  .map(key => (clonedNeighbours[key] || 0))
-  .reduce(sum,0);
+for(let i = -10; i < maxOfMax + 10; i++) {
+  for(let j = -10; j < maxOfMax + 10; j++) {
+    for(let k = -10; k < maxOfMax + 10; k++) {
+      // console.log(i,j,k, limits.yz[`${j},${k}`], limits.xz[`${i},${k}`],limits.xy[`${i},${j}`])
+      if(!(
+        (i > limits.yz[`${j},${k}`].min && i < limits.yz[`${j},${k}`].max) &&
+        (j > limits.xz[`${i},${k}`].min && j < limits.xz[`${i},${k}`].max) &&
+        (k > limits.xy[`${i},${j}`].min && k < limits.xy[`${i},${j}`].max)
+      ))
+      newInput.push({x:i,y:j,z:k});
+    }
+  }
+}
 
-console.log("Surface Area 2:", surfaceArea, oldSA, oldSA - surfaceArea);
+// console.lo g(newInput, limits);
+
+let newSurfaceArea = 0;
+newInput.forEach(cube => {
+  newSurfaceArea += (6 - findNeighbours(newInput, cube).length);
+})
+
+console.log('New surface area', newSurfaceArea, newSurfaceArea - ((maxOfMax + 20)*(maxOfMax + 20)*6))
+
+//
+// console.log(limits)
+// const oldSA = surfaceArea
+// surfaceArea -= Object.keys(neighbours)
+//   // .filter(key => !key.includes('-')) // removes any negatives
+//   // .filter(key => neighbours[key] >= 6)
+//   .filter(key => {
+//     const i = key.split(',');
+//     const x = parseInt(i[0]);
+//     const y = parseInt(i[1]);
+//     const z = parseInt(i[2]);
+//
+//     return (
+//       // (limits.yz[`${y},${z}`] && limits.xz[`${x},${z}`] && limits.xy[`${x},${y}`]) &&
+//       (x > limits.yz[`${y},${z}`].min && x < limits.yz[`${y},${z}`].max) &&
+//       (y > limits.xz[`${x},${z}`].min && y < limits.xz[`${x},${z}`].max) &&
+//       (z > limits.xy[`${x},${y}`].min && z < limits.xy[`${x},${y}`].max)
+//     )
+//   })
+//   .map(key => (clonedNeighbours[key] || 0))
+//   .reduce(sum,0);
+//
+// console.log("Surface Area 2:", surfaceArea, oldSA, oldSA - surfaceArea);
 // 4184 too high
 // 3048 too high
 // 2970 not right
 // 2969 not right
 // 2968 not right
+// 2500 not right
 // 2494 not right
 // 2491 not right
 // 2372 too low
