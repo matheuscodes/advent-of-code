@@ -17,7 +17,7 @@ const { read, clone, sum, max } = require('../common.js');
 
 const coreGraph = {};
 
-const input = read('./day18.input', testInput)
+const input = read('./day18.repolho2', testInput)
                 .split('\n')
                 .filter(i => i)
                 .map(i => i.split(','))
@@ -183,9 +183,9 @@ for(let i = -10; i < maxOfMax + 10; i++) {
     for(let k = -10; k < maxOfMax + 10; k++) {
       // console.log(i,j,k, limits.yz[`${j},${k}`], limits.xz[`${i},${k}`],limits.xy[`${i},${j}`])
       if(!(
-        (i > limits.yz[`${j},${k}`].min && i < limits.yz[`${j},${k}`].max) &&
-        (j > limits.xz[`${i},${k}`].min && j < limits.xz[`${i},${k}`].max) &&
-        (k > limits.xy[`${i},${j}`].min && k < limits.xy[`${i},${j}`].max)
+        (i >= limits.yz[`${j},${k}`].min && i <= limits.yz[`${j},${k}`].max) &&
+        (j >= limits.xz[`${i},${k}`].min && j <= limits.xz[`${i},${k}`].max) &&
+        (k >= limits.xy[`${i},${j}`].min && k <= limits.xy[`${i},${j}`].max)
       ))
       newInput.push({x:i,y:j,z:k});
     }
