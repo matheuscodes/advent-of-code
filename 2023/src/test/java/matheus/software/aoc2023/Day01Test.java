@@ -1,6 +1,6 @@
 package matheus.software.aoc2023;
 
-import matheus.software.aoc2023.day01.Day01;
+import matheus.software.aoc2023.day01.CalibrationParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Day01Test {
 
     @Autowired
-    Day01 underTest;
+    CalibrationParser underTest;
 
     @Autowired
     Helpers helpers;

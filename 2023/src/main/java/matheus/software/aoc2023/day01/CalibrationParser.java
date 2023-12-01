@@ -6,16 +6,16 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 @Component
-public class Day01 {
+public class CalibrationParser {
 
     public Long sumCalibrations(String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
-        return lines.map(Day01::extractDigits).reduce(Long::sum).orElse(0L);
+        return lines.map(CalibrationParser::extractDigits).reduce(Long::sum).orElse(0L);
     }
 
     public Long sumSpelledCalibrations(String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
-        return lines.map(Day01::replaceDigits).map(Day01::extractDigits).reduce(Long::sum).orElse(0L);
+        return lines.map(CalibrationParser::replaceDigits).map(CalibrationParser::extractDigits).reduce(Long::sum).orElse(0L);
     }
 
     private static long extractDigits(String line) {
