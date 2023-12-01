@@ -1,4 +1,4 @@
-package matheus.software.aoc2023;
+package matheus.software.aoc2023.day01;
 
 import org.springframework.stereotype.Component;
 
@@ -8,12 +8,12 @@ import java.util.stream.Stream;
 @Component
 public class Day01 {
 
-    Long sumCalibrations(String raw) {
+    public Long sumCalibrations(String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
         return lines.map(Day01::extractDigits).reduce(Long::sum).orElse(0L);
     }
 
-    Long sumSpelledCalibrations(String raw) {
+    public Long sumSpelledCalibrations(String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
         return lines.map(Day01::replaceDigits).map(Day01::extractDigits).reduce(Long::sum).orElse(0L);
     }

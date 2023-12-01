@@ -1,5 +1,6 @@
 package matheus.software.aoc2023;
 
+import matheus.software.aoc2023.day01.Day01;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
