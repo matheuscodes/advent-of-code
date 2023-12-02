@@ -3,22 +3,24 @@ package matheus.software.aoc2023;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 
 @Service
-public class Helpers {
+public final class Helpers {
 
 
-    public String readInput(String name) {
-
+    public String readInput(final String name) {
         return readFileAsString(name + ".input");
     }
 
-    public String readSample(String name) {
+    public String readSample(final String name) {
         return readFileAsString(name + ".sample");
     }
 
-    public String readFileAsString(String filename) {
+    public String readFileAsString(final String filename) {
         try {
             File file = ResourceUtils.getFile("classpath:" + filename);
 

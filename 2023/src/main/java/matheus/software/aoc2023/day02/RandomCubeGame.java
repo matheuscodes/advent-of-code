@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Component
-public class RandomCubeGame {
+public final class RandomCubeGame {
 
-    private List<Game> parseGames(String raw) {
+    private List<Game> parseGames(final String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
         return lines
                 .map(a -> a.replaceAll("Game ", ""))
@@ -17,7 +17,7 @@ public class RandomCubeGame {
                 .map(a -> {
                     int id = Integer.parseInt(a[0]);
                     Game game = new Game(id);
-                    for(String round: a[1].split(";")) {
+                    for (String round: a[1].split(";")) {
                         game.add(round.split(","));
                     }
                     return game;
@@ -25,7 +25,12 @@ public class RandomCubeGame {
                 .toList();
     }
 
-    public int possibleGameSum(String raw, int reds, int greens, int blues) {
+    public int possibleGameSum(
+            final String raw,
+            final int reds,
+            final int greens,
+            final int blues
+    ) {
         return parseGames(raw).stream()
                 .filter(a -> a.isPossible(reds, greens, blues))
                 .map(Game::getId)
@@ -33,7 +38,7 @@ public class RandomCubeGame {
                 .orElse(0);
     }
 
-    public long gamePowerSum(String raw) {
+    public long gamePowerSum(final String raw) {
         return parseGames(raw).stream()
                 .map(Game::getPower)
                 .reduce(Long::sum)

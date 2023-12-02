@@ -6,36 +6,44 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 @Component
-public class CalibrationParser {
+public final class CalibrationParser {
+    private static final long DECIMAL = 10L;
 
-    public Long sumCalibrations(String raw) {
+    public Long sumCalibrations(final String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
-        return lines.map(CalibrationParser::extractDigits).reduce(Long::sum).orElse(0L);
+        return lines
+                .map(CalibrationParser::extractDigits)
+                .reduce(Long::sum)
+                .orElse(0L);
     }
 
-    public Long sumSpelledCalibrations(String raw) {
+    public Long sumSpelledCalibrations(final String raw) {
         Stream<String> lines = Arrays.stream(raw.split("\\n"));
-        return lines.map(CalibrationParser::replaceDigits).map(CalibrationParser::extractDigits).reduce(Long::sum).orElse(0L);
+        return lines
+                .map(CalibrationParser::replaceDigits)
+                .map(CalibrationParser::extractDigits)
+                .reduce(Long::sum)
+                .orElse(0L);
     }
 
-    private static long extractDigits(String line) {
+    private static long extractDigits(final String line) {
         int first = -1;
         int second = -1;
 
-        for(char i: line.toCharArray()) {
-            if(i >= '0' && i <= '9') {
-                if(first == -1) {
+        for (char i: line.toCharArray()) {
+            if (i >= '0' && i <= '9') {
+                if (first == -1) {
                     first = i - '0';
                 }
                 second = i - '0';
             }
         }
-        return ((first * 10L) + second);
+        return ((first * DECIMAL) + second);
     }
 
 
 
-    private static String replaceDigits(String line) {
+    private static String replaceDigits(final String line) {
         return line.replaceAll("one", "o1e")
                 .replaceAll("two", "t2o")
                 .replaceAll("three", "t3e")
