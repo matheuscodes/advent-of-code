@@ -40,7 +40,7 @@ public class CalibrationParser {
                 .replaceAll("two", "t2o")
                 .replaceAll("three", "t3e")
                 .replaceAll("four", "f4r")
-                .replaceAll("five", "f5i")
+                .replaceAll("five", "f5e")
                 .replaceAll("six", "s6x")
                 .replaceAll("seven", "s7n")
                 .replaceAll("eight", "e8t")
