@@ -12,21 +12,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class Day02Test {
 
     @Autowired
-    RandomCubeGame underTest;
+    private RandomCubeGame underTest;
 
     @Autowired
-    Helpers helpers;
+    private Helpers helpers;
 
     @Test
     void firstPart() {
-        assertEquals(8, underTest.possibleGameSum(helpers.readSample("day02.first"), 12, 13, 14));
-        assertTrue( 3029 > underTest.possibleGameSum(helpers.readInput("day02"), 12, 13, 14)); // Too high
-        assertEquals(2679, underTest.possibleGameSum(helpers.readInput("day02"), 12, 13, 14));
+        String raw = helpers.readSample("day02");
+        assertEquals(8, underTest.possibleGameSum(raw, 12, 13, 14));
+        String input = helpers.readInput("day02");
+        assertTrue(3029 > underTest.possibleGameSum(input, 12, 13, 14));
+        assertEquals(2679, underTest.possibleGameSum(input, 12, 13, 14));
     }
 
     @Test
     void secondPart() {
-        assertEquals(2286, underTest.gamePowerSum(helpers.readSample("day02.first")));
+        assertEquals(2286, underTest.gamePowerSum(helpers.readSample("day02")));
         assertEquals(77607, underTest.gamePowerSum(helpers.readInput("day02")));
     }
 }

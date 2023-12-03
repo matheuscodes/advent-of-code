@@ -27,7 +27,7 @@ public class Day03Test {
 
     @Test
     void firstPart() {
-        String raw = helpers.readSample("day03.first");
+        String raw = helpers.readSample("day03");
         List<PartNumber> found = partNumberSearcher.getAllNumbers(raw);
         assertEquals(10, found.size());
 
@@ -64,7 +64,7 @@ public class Day03Test {
 
     @Test
     void secondPart() {
-        String raw = helpers.readSample("day03.first");
+        String raw = helpers.readSample("day03");
         assertEquals(2, gearSearcher.findGears(raw).size());
         assertEquals(467835, gearSearcher.sumGearRatios(raw));
         assertEquals(86879020, gearSearcher.sumGearRatios(
