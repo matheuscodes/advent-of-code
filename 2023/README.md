@@ -10,6 +10,7 @@ so this means about 2 hours offset.
 ```
       --------Part 1--------   --------Part 2--------
 Day       Time   Rank  Score       Time   Rank  Score
+  5   03:40:01  19975      0   04:43:38   9837      0
   4   02:14:57  21580      0   02:40:31  17581      0
   3   03:40:27  18000      0   04:09:52  15429      0
   2   02:42:37  19759      0   02:54:46  19022      0
@@ -27,12 +28,18 @@ Day       Time   Rank  Score       Time   Rank  Score
 
 [Day 04 task](./src/main/java/matheus/software/aoc2023/day04/task.md) - [solution](./src/main/java/matheus/software/aoc2023/day04)
 
+[Day 05 task](./src/main/java/matheus/software/aoc2023/day05/task.md) - [solution](./src/main/java/matheus/software/aoc2023/day05)
+
 
 ## Drawing
 
 ```
-
-            .''            .   ~..'*   '. ~  .      4 * *
+                               . ' '' '''...
+                            '     *     ..  ''.
+                       '              ~'  '.~  '.
+                                  ~     '. *'.~ :    5 **
+               ...'''''            .''.~  '..' .'
+            .''            .   ~..'*   '. ~  .       4 **
           .'                 '''../......'''
           :               /\    -/  :
           '.              -   - /  .'
