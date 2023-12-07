@@ -10,5 +10,5 @@
     <suppress files=".*" checks="MissingJavadocMethod" />
     <suppress files=".*" checks="JavadocStyle" />
     <suppress files=".*" checks="TodoComment" />
-    <suppress files=".*Test.*" checks="MagicNumber" />
+    <suppress files=".*" checks="MagicNumber" />
 </suppressions>
