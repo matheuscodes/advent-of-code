@@ -9,9 +9,9 @@ import java.util.Map;
 @Component
 public final class CamelCards {
 
-    private static final Map<Character, Long> CARD_STRENGHT;
+    private static final Map<Character, Long> CARD_STRENGTH;
     static {
-        CARD_STRENGHT = Map.ofEntries(
+        CARD_STRENGTH = Map.ofEntries(
                 Map.entry('A', 12L),
                 Map.entry('K', 11L),
                 Map.entry('Q', 10L),
@@ -28,9 +28,9 @@ public final class CamelCards {
         );
     }
 
-    private static final Map<Character, Long> JOKER_CARD_STRENGHT;
+    private static final Map<Character, Long> JOKER_CARD_STRENGTH;
     static {
-        JOKER_CARD_STRENGHT = Map.ofEntries(
+        JOKER_CARD_STRENGTH = Map.ofEntries(
                 Map.entry('A', 12L),
                 Map.entry('K', 11L),
                 Map.entry('Q', 10L),
@@ -49,7 +49,7 @@ public final class CamelCards {
     private List<Hand> parseHands(final String raw) {
         String[] hands = raw.split("\\n");
         return Arrays.stream(hands).map(i -> i.split("\\s"))
-                .map(i -> new Hand(i[0], i[1], CARD_STRENGHT))
+                .map(i -> new Hand(i[0], i[1], CARD_STRENGTH))
                 .sorted()
                 .toList();
     }
@@ -57,7 +57,7 @@ public final class CamelCards {
     private List<JokerHand> parseJokerHands(final String raw) {
         String[] hands = raw.split("\\n");
         return Arrays.stream(hands).map(i -> i.split("\\s"))
-                .map(i -> new JokerHand(i[0], i[1], JOKER_CARD_STRENGHT))
+                .map(i -> new JokerHand(i[0], i[1], JOKER_CARD_STRENGTH))
                 .sorted()
                 .toList();
     }

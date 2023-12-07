@@ -17,18 +17,15 @@ public final class JokerHand extends Hand {
     public long selection(final Map<Character, Integer> unique) {
         if (unique.containsKey('J')) {
             return switch (unique.size()) {
-                case 1 -> FIVE_OF_A_KIND;
-                case 2 -> FIVE_OF_A_KIND;
+                case 1, 2 -> FIVE_OF_A_KIND;
                 case 3 -> switch (unique.get('J')) {
                     case 1 -> unique.containsValue(3)
                             ? FOUR_OF_A_KIND : FULL_HOUSE;
-                    case 2 -> FOUR_OF_A_KIND;
-                    case 3 -> FOUR_OF_A_KIND;
+                    case 2, 3 -> FOUR_OF_A_KIND;
                     default -> throw new RuntimeException("Impossible");
                 };
                 case 4 -> switch (unique.get('J')) {
-                    case 1 -> THREE_OF_A_KIND;
-                    case 2 -> THREE_OF_A_KIND;
+                    case 1, 2 -> THREE_OF_A_KIND;
                     default -> throw new RuntimeException("Impossible");
                 };
                 case 5 -> ONE_PAIR;
