@@ -18,6 +18,8 @@ public class Day18Test {
 
     @Test
     void firstPart() {
+        //TODO: this originally reused solution from Day 10
+        // What about using shoelace + Prick's Theorem to solve it as well?
         String raw = helpers.readSample("day18");
         assertEquals(62, underTest.interiorVolume(raw));
 
