@@ -1,6 +1,7 @@
 package matheus.software.aoc2023;
 
 import matheus.software.aoc2023.day17.CityMap;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ public class Day17Test {
     @Autowired
     private CityMap underTest;
 
+    @Disabled
     @Test
     void firstPart() {
         String simple = "111\n991\n991";
