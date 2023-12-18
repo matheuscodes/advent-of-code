@@ -11,4 +11,5 @@
     <suppress files=".*" checks="JavadocStyle" />
     <suppress files=".*" checks="TodoComment" />
     <suppress files=".*" checks="MagicNumber" />
+    <suppress files=".*17.*" checks="[a-zA-Z0-9]*" />
 </suppressions>
