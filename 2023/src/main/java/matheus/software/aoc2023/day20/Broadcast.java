@@ -2,14 +2,14 @@ package matheus.software.aoc2023.day20;
 
 import java.util.Queue;
 
-public class Broadcast extends Module {
+public final class Broadcast extends Module {
     public Broadcast(final String name) {
         super(name.trim());
     }
 
     @Override
-    public void proceed(final Queue<Message> pulses) {
-        var pulse = this.consumeFirstPulse();
+    public void proceed(final Message message, final Queue<Message> pulses) {
+        var pulse = message.getPulse();
         if (pulse != null) {
             this.getOutputs().forEach(i -> {
                 this.getSentPulses().add(pulse);

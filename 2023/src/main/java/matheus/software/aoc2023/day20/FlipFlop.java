@@ -2,7 +2,7 @@ package matheus.software.aoc2023.day20;
 
 import java.util.Queue;
 
-public class FlipFlop extends Module {
+public final class FlipFlop extends Module {
 
     private boolean turnedOn = false;
 
@@ -11,8 +11,8 @@ public class FlipFlop extends Module {
     }
 
     @Override
-    public void proceed(final Queue<Message> pulses) {
-        var pulse = this.consumeFirstPulse();
+    public void proceed(final Message message, final Queue<Message> pulses) {
+        var pulse = message.getPulse();
         if ("low".equals(pulse)) {
             if (turnedOn) {
                 turnedOn = false;

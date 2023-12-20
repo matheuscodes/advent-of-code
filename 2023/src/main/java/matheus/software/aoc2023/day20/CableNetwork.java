@@ -21,8 +21,6 @@ public final class CableNetwork {
             modules.put(created.getName(), created);
         }
 
-//        modules.put("output", new Output("output"));
-
         for (String line: lines) {
             var split = line.split(" -> ");
             var moduleName = split[0].replaceAll("[%&]", "");
@@ -34,17 +32,18 @@ public final class CableNetwork {
                 module.addOutput(modules.get(connection.trim()));
             }
         }
-        var pulses = new LinkedList<String>();
+
         Queue<Message> messages = new LinkedList<>();
         for (int i = 0; i < pushes; i++) {
             messages.add(new Message("low", "broadcaster", "start"));
             while (!messages.isEmpty()) {
                 var message = messages.poll();
                 var module = modules.get(message.getDestination());
-                module.process(message, messages, modules);
+                module.proceed(message, messages);
             }
         }
 
+        var pulses = new LinkedList<String>();
         modules.values().forEach(m -> pulses.addAll(m.getSentPulses()));
 
         long highs = pulses.stream().filter("high"::equals).count();
@@ -52,7 +51,7 @@ public final class CableNetwork {
         return highs * lows;
     }
 
-    public long singleLowEnd(String raw) {
+    public long singleLowEnd(final String raw) {
         var lines = raw.split("\\n");
         var modules = new HashMap<String, Module>();
         for (String line: lines) {
@@ -64,8 +63,6 @@ public final class CableNetwork {
             };
             modules.put(created.getName(), created);
         }
-
-//        modules.put("output", new Output("output"));
 
         for (String line: lines) {
             var split = line.split(" -> ");
@@ -84,7 +81,7 @@ public final class CableNetwork {
         Long jt = null;
         Long kb = null;
         Long ks = null;
-        long counter = 0;
+        long counter = 1;
         Queue<Message> messages = new LinkedList<>();
         while (sx == null || jt == null || kb == null || ks == null) {
             messages.add(new Message("low", "broadcaster", "start"));
@@ -92,34 +89,22 @@ public final class CableNetwork {
                 var message = messages.poll();
                 if ("low".equals(message.getPulse())) {
                     if ("sx".equals(message.getDestination()) && sx == null) {
-                        sx = 0L;
+                        sx = counter;
                     }
                     if ("jt".equals(message.getDestination()) && jt == null) {
-                        jt = 0L;
+                        jt = counter;
                     }
                     if ("kb".equals(message.getDestination()) && kb == null) {
-                        kb = 0L;
+                        kb = counter;
                     }
                     if ("ks".equals(message.getDestination()) && ks == null) {
-                        ks = 0L;
+                        ks = counter;
                     }
                 }
                 var module = modules.get(message.getDestination());
-                module.process(message, messages, modules);
+                module.proceed(message, messages);
             }
             counter += 1;
-            if (sx != null && sx == 0L) {
-                sx = counter;
-            }
-            if (jt != null && jt == 0L) {
-                jt = counter;
-            }
-            if (kb != null && kb == 0L) {
-                kb = counter;
-            }
-            if (ks != null && ks == 0L) {
-                ks = counter;
-            }
         }
 
         return lcm(sx, lcm(jt, lcm(kb, ks)));
