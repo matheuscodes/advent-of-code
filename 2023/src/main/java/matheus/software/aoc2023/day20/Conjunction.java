@@ -11,28 +11,8 @@ public final class Conjunction extends Module {
         super(name.trim().replaceAll("&", ""));
     }
 
-
-//    @Override
-//    public void receive(final String pulse, final Module whoAmI) {
-//        newMemory.computeIfAbsent(whoAmI.getName(), k -> new LinkedList<>());
-//        newMemory.get(whoAmI.getName()).add(pulse);
-//    }
-
     @Override
     public void proceed(final Message message, final Queue<Message> pulses) {
-//        boolean received = false;
-//        for (var entry: newMemory.entrySet()) {
-//            if (entry.getValue().size() > 0) {
-//                var item = entry.getValue().removeFirst();
-//                if (item != null) {
-//                    memory.put(entry.getKey(), item);
-//                }
-//                received = true;
-//            }
-//        }
-//        if (!received) {
-//            return;
-//        }
         memory.put(message.getSource(), message.getPulse());
         if (memory.values().stream().allMatch("high"::equals)) {
             this.getOutputs().forEach(i -> {
