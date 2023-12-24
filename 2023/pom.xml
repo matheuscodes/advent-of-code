@@ -35,6 +35,15 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Unfortunately this doesn't work out of the box -->
+		<!-- Download and unzip https://github.com/Z3Prover/z3/releases/download/z3-4.12.4/z3-4.12.4-x64-win.zip -->
+		<!-- Install directly on the SDK bin or TODO: find a way to link -->
+		<dependency>
+			<groupId>io.github.p-org.solvers</groupId>
+			<artifactId>z3</artifactId>
+			<version>4.8.14-v5</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
