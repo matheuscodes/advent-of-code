@@ -1,5 +1,6 @@
 package matheus.software.aoc2024;
 
+import matheus.software.aoc2024.day13.Arcade;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
