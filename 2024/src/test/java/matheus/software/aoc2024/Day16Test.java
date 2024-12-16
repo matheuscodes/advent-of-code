@@ -20,6 +20,15 @@ public final class Day16Test {
     void firstPart() {
         assertEquals(7036, underTest.findPathScore(helpers.readSample("day16.1")));
         assertEquals(11048, underTest.findPathScore(helpers.readSample("day16.2")));
-//        assertEquals(-1, underTest.findPathScore(helpers.readInput("day16")));
+        // 96444 - Too high (wrong turn calculation)
+        assertEquals(94444, underTest.findPathScore(helpers.readInput("day16")));
+    }
+
+    @Test
+    void secondPart() {
+        assertEquals(45, underTest.countSpots(helpers.readSample("day16.1")));
+        assertEquals(64, underTest.countSpots(helpers.readSample("day16.2")));
+        // 96444 - Too high
+        assertEquals(502, underTest.countSpots(helpers.readInput("day16")));
     }
 }

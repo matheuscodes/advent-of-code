@@ -6,8 +6,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public final class ReindeerMaze {
@@ -20,7 +26,6 @@ public final class ReindeerMaze {
     @Setter
     static class Reindeer {
         private int[] currentPosition;
-        private int[] goal;
         private List<int[]> visited;
 
         private String[][] maze;
@@ -30,10 +35,6 @@ public final class ReindeerMaze {
             currentPosition = new int[] {
                     maze.length - 2,
                     1
-            };
-            goal = new int[] {
-                    1,
-                    maze[0].length - 2
             };
             visited = new ArrayList<>();
             visited.add(currentPosition);
@@ -46,7 +47,7 @@ public final class ReindeerMaze {
         private long turns() {
             long turns = 0;
             Face facing = Face.EAST;
-            int[] current = currentPosition;
+            int[] current = visited.get(0);
             for (int[] position: visited) {
                 switch (facing) {
                     case EAST, WEST -> {
@@ -76,8 +77,12 @@ public final class ReindeerMaze {
             return turns;
         }
 
-        public boolean finished() {
-            return currentPosition[0] == goal[0] && currentPosition[1] == goal[1];
+        public String getKey() {
+            return currentPosition[0] + "_" + currentPosition[1] + "_" + currentFace();
+        }
+
+        private int currentFace() {
+            return (int) (turns() % 4);
         }
 
         private List<int[]> next() {
@@ -94,7 +99,6 @@ public final class ReindeerMaze {
 
         Reindeer(final Reindeer previousState) {
             currentPosition = previousState.currentPosition;
-            goal = previousState.goal;
             visited = new ArrayList<>(previousState.visited.size());
             visited.addAll(previousState.visited);
             maze = previousState.maze;
@@ -106,26 +110,22 @@ public final class ReindeerMaze {
                     int finalI = i;
                     int finalJ = j;
                     if (visited.stream().anyMatch(a -> a[0] == finalI && a[1] == finalJ)) {
-                        System.out.print("x");
+                        System.out.print("\u001B[31m" + "x" + "\u001B[0m");
                     } else {
                         System.out.print(maze[i][j]);
                     }
                 }
                 System.out.println();
             }
-            System.out.println("Visited: " + visited.size());
+            System.out.println("Visited: " + visited.size() + " Turns:" + turns());
         }
 
         static int compare(final Reindeer x, final Reindeer y) {
             return Long.compare(x.pathPoints(), y.pathPoints());
         }
 
-        public List<Reindeer> variants() {
-            return next().stream().map(position -> {
-                Reindeer deer = new Reindeer(this);
-                deer.move(position);
-                return deer;
-            }).toList();
+        public Reindeer variate() {
+            return new Reindeer(this);
         }
 
         private void move(final int[] position) {
@@ -141,16 +141,74 @@ public final class ReindeerMaze {
         for (String line: lines) {
             maze[row++] = line.split("");
         }
-        PriorityQueue<Reindeer> multiverse = new PriorityQueue<>(Reindeer::compare);
-        multiverse.add(new Reindeer(maze));
-        while (!multiverse.isEmpty()) {
-            Reindeer deer = multiverse.poll();
-            if (deer.finished()) {
-                deer.printDeer();
-                return deer.pathPoints();
-            }
-            multiverse.addAll(deer.variants());
-        }
-        return 0L;
+        HashMap<String, LinkedList<Reindeer>> bests = new HashMap<>();
+        return findBestPath(maze, bests).pathPoints();
     }
+    public int countSpots(final String raw) {
+        String[] lines = raw.split("\\n");
+        String[][] maze = new String[lines.length][];
+        int row = 0;
+        for (String line: lines) {
+            maze[row++] = line.split("");
+        }
+        HashMap<String, LinkedList<Reindeer>> bests = new HashMap<>();
+        Reindeer best = findBestPath(maze, bests);
+
+        Set<String> set = bests.entrySet()
+                .stream()
+                .filter(i -> i.getKey().startsWith(1 + "_" + (maze[0].length - 2)))
+                .flatMap(i -> i
+                        .getValue()
+                        .stream()
+                        .filter(deer -> deer.pathPoints() == best.pathPoints())
+                        .flatMap(deer ->
+                                deer
+                                        .getVisited()
+                                        .stream()
+                                        .map(pos -> pos[0] + "_" + pos[1])))
+                .collect(Collectors.toSet());
+        return set.size();
+    }
+
+    private Reindeer findBestPath(final String[][] maze, final HashMap<String, LinkedList<Reindeer>> bests) {
+        HashMap<String, Reindeer> distances = new HashMap<>();
+        Reindeer firstDeer = new Reindeer(maze);
+        distances.put(firstDeer.currentPosition[0] + "_" + firstDeer.currentPosition[1], firstDeer);
+        PriorityQueue<Reindeer> unvisited = new PriorityQueue<>(Reindeer::compare);
+        unvisited.add(firstDeer);
+        HashSet<String> visited = new HashSet<>();
+        while (!unvisited.isEmpty()) {
+            Reindeer thisDeer = unvisited.poll();
+            thisDeer.next().forEach(nextPosition -> {
+                Reindeer possibleNextDeer = thisDeer.variate();
+                possibleNextDeer.move(nextPosition);
+                Reindeer nextDeer = distances.get(possibleNextDeer.getKey());
+                if (nextDeer == null) {
+                    distances.put(possibleNextDeer.getKey(), possibleNextDeer);
+                    bests.put(possibleNextDeer.getKey(), new LinkedList<>());
+                    bests.get(possibleNextDeer.getKey()).add(possibleNextDeer);
+                } else {
+                    if (possibleNextDeer.pathPoints() < nextDeer.pathPoints()) {
+                        distances.put(possibleNextDeer.getKey(), possibleNextDeer);
+                        bests.put(possibleNextDeer.getKey(), new LinkedList<>());
+                        bests.get(possibleNextDeer.getKey()).add(possibleNextDeer);
+                    } else if (possibleNextDeer.pathPoints() == nextDeer.pathPoints()) {
+                        bests.get(possibleNextDeer.getKey()).add(possibleNextDeer);
+                    }
+                }
+                if (!visited.contains(possibleNextDeer.getKey())) {
+                    unvisited.add(possibleNextDeer);
+                }
+            });
+            visited.add(thisDeer.getKey());
+        }
+
+        return Arrays.stream(new Reindeer[]{
+                distances.get(1 + "_" + (maze[0].length - 2) + "_0"),
+                distances.get(1 + "_" + (maze[0].length - 2) + "_1"),
+                distances.get(1 + "_" + (maze[0].length - 2) + "_2"),
+                distances.get(1 + "_" + (maze[0].length - 2) + "_3")
+        }).filter(Objects::nonNull).min(Reindeer::compare).orElseThrow();
+    }
+
 }
